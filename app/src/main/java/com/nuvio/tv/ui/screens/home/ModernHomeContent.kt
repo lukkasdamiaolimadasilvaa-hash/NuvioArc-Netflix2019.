@@ -749,7 +749,7 @@ fun ModernHomeContent(
     val portraitCatalogCardWidth = portraitBaseWidth * portraitModernPosterScale
     val drawnDensity = LocalDensity.current
     val drawnPosterPx = with(drawnDensity) { portraitCatalogCardWidth.roundToPx() }
-    val drawnLogoPx = with(drawnDensity) { 340.dp.roundToPx() }
+    val drawnLogoPx = with(drawnDensity) { 420.dp.roundToPx() }
     val drawnScreenPx = LocalContext.current.resources.displayMetrics.widthPixels
     LaunchedEffect(drawnPosterPx, drawnLogoPx, drawnScreenPx) {
         DrawnArtworkWidths.report(drawnPosterPx, drawnLogoPx, drawnScreenPx)
@@ -781,7 +781,7 @@ fun ModernHomeContent(
     }
 
     Box(modifier = Modifier.fillMaxSize().background(NuvioTheme.colors.Background)) {
-            val posterCardCornerRadius = remember(uiState.posterCardCornerRadiusDp) { minOf(uiState.posterCardCornerRadiusDp.dp, 3.dp) }
+            val posterCardCornerRadius = remember(uiState.posterCardCornerRadiusDp) { minOf(uiState.posterCardCornerRadiusDp.dp, 2.dp) }
             val rowHorizontalPadding = if (isV2) 24.dp else 52.dp
 
             val settledCarouselItemState = remember(rowByKey) {
