@@ -1295,7 +1295,7 @@ internal fun ModernRowSection(
                     }
                     .focusGroup(),
                 contentPadding = PaddingValues(start = rowStartPadding, end = ROW_END_PADDING),
-                horizontalArrangement = Arrangement.spacedBy(NuvioTheme.spacing.md)
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 itemsIndexed(
                     items = row.items.list,
@@ -2059,6 +2059,41 @@ private fun ModernCarouselCard(
                     )
                 }
 
+                // Netflix 2019 places poster titles inside the artwork, over a short bottom fade.
+                if (showLabels && !useLandscapeOverlayTreatment && !isBackdropExpanded &&
+                    !isCollectionFolder && payload?.scoutMix == null && item.title.isNotBlank()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .height(cardHeight * 0.38f)
+                            .background(
+                                Brush.verticalGradient(
+                                    0.0f to Color.Transparent,
+                                    0.42f to Color.Black.copy(alpha = 0.18f),
+                                    1.0f to Color.Black.copy(alpha = 0.92f)
+                                )
+                            )
+                    )
+                    Text(
+                        text = item.title,
+                        style = titleStyle.copy(
+                            fontSize = 16.sp,
+                            lineHeight = 17.sp,
+                            fontWeight = FontWeight.Black,
+                            textDirection = item.title.contentTextDirection()
+                        ),
+                        color = Color.White,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .padding(start = 8.dp, end = 8.dp, bottom = 10.dp)
+                    )
+                }
+
                 item.cornerLabel?.takeIf { it.isNotBlank() }?.let { label ->
                     Text(
                         text = label,
@@ -2105,7 +2140,10 @@ private fun ModernCarouselCard(
             }
         }
 
-        if (showLabels && !isBackdropExpanded && item.title.isNotBlank() && payload?.scoutMix == null) {
+        if (showLabels && !isBackdropExpanded &&
+            (useLandscapeOverlayTreatment || isCollectionFolder) &&
+            item.title.isNotBlank() && payload?.scoutMix == null
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
