@@ -298,23 +298,12 @@ private fun SidebarNavigationItem(
         label = "sidebarItemIconTint"
     )
     val iconTint = if (selected && !isFocused) iconTintTarget else animatedIconTint
-    val itemScale by animateFloatAsState(
-        targetValue = if (isFocused && !isV2) 1.1f else 1f,
-        animationSpec = tween(durationMillis = NuvioMotion.tokens.durations.fast, easing = NuvioMotion.tokens.easings.standard),
-        label = "sidebarItemScale"
-    )
-
     SidebarItemSurface(
         isV2 = isV2,
         backgroundColor = backgroundColor,
         shape = shape,
         onClick = onClick,
         modifier = modifier
-            .graphicsLayer {
-                scaleX = itemScale
-                scaleY = itemScale
-                transformOrigin = TransformOrigin.Center
-            }
             .onFocusChanged {
                 isFocused = it.hasFocus
                 onFocusChanged(it.hasFocus)
@@ -325,6 +314,7 @@ private fun SidebarNavigationItem(
             .then(if (isV2) Modifier.nuvioV2Focus(isFocused, shape, hardwareShadow = false)
                 else Modifier)
     ) {
+        Box(Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .semantics {
@@ -340,8 +330,9 @@ private fun SidebarNavigationItem(
             modifier = Modifier
                 .size(SidebarLeadingVisualSize)
                 .graphicsLayer {
-                    scaleX = iconScale
-                    scaleY = iconScale
+                    val netflixFocusScale = if (isFocused) 1.3f else 1f
+                    scaleX = iconScale * netflixFocusScale
+                    scaleY = iconScale * netflixFocusScale
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -382,6 +373,18 @@ private fun SidebarNavigationItem(
                 .weight(1f)
                 .graphicsLayer { alpha = labelAlpha }
         )
+        }
+        if (selected) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 2.dp)
+                    .width(16.dp)
+                    .height(3.dp)
+                    .clip(CircleShape)
+                    .background(accentColor)
+            )
+        }
         }
     }
 }
