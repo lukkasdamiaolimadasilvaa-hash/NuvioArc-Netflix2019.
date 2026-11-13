@@ -1748,6 +1748,12 @@ private fun ModernCarouselCard(
     val isFastScrollingState = LocalFastScrollActive.current
     // Only the focused card shows the chrome, so only it follows the fast-scroll flag.
     val isFastScrolling = isFocused && isFastScrollingState.value
+    // Netflix 2019 lifts the focused poster slightly; keep the movement subtle for TV D-pad use.
+    val netflixFocusScale by animateFloatAsState(
+        targetValue = if (isFocused && !isFastScrolling) 1.03f else 1f,
+        animationSpec = tween(durationMillis = 180),
+        label = "netflixPosterFocusScale"
+    )
     val effectiveFocusedBorder = if (isFastScrolling && !isV2) {
         remember(cardShape) {
             Border(
@@ -1803,6 +1809,10 @@ private fun ModernCarouselCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(cardHeight)
+                .graphicsLayer {
+                    scaleX = netflixFocusScale
+                    scaleY = netflixFocusScale
+                }
                 // One description per card: the artwork, badges and overlays inside are not read one by one.
                 .semantics { contentDescription = cardDescription }
                 .rowFocusRing(isFocused, cardShape)
