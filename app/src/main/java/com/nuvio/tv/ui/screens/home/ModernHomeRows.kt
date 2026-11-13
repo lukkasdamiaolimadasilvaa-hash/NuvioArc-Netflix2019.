@@ -2062,7 +2062,7 @@ private fun ModernCarouselCard(
                 }
 
                 // Netflix 2019 places poster titles inside the artwork, over a short bottom fade.
-                if (showLabels && !useLandscapeOverlayTreatment && !isBackdropExpanded &&
+                if (showLabels && !useLandscapeOverlayTreatment && !isBackdropExpanded && !showTitleOverlay &&
                     !isCollectionFolder && payload?.scoutMix == null && item.title.isNotBlank()
                 ) {
                     Box(
