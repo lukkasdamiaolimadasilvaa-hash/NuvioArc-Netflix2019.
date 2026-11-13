@@ -3,6 +3,7 @@ package com.nuvio.tv.ui.v2.appearance
 import com.nuvio.tv.domain.model.AppTheme
 import com.nuvio.tv.domain.model.V2AppearancePreferences
 import com.nuvio.tv.domain.model.VisualStyle
+import androidx.compose.ui.graphics.Color
 import com.nuvio.tv.ui.theme.ThemeColors
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -18,8 +19,8 @@ class V2PaletteTest {
                 val original = ThemeColors.getColorPalette(theme)
                 val result = v2Palette(original, appearance)
                 assertEquals(original.secondary, result.secondary)
-                assertEquals(original.focusRing, result.focusRing)
-                assertEquals(original.focusRingGradient, result.focusRingGradient)
+                assertEquals(Color.White, result.focusRing)
+                assertEquals(listOf(Color.White), result.focusRingGradient)
                 assertEquals(reference.background, result.background)
                 assertEquals(reference.surface, result.surface)
                 assertEquals(reference.modal, result.modal)
