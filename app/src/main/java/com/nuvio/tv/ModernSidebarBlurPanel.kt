@@ -274,9 +274,8 @@ private fun SidebarNavigationItem(
     val backgroundColor = if (selected && !isFocused) backgroundColorTarget else animatedBackgroundColor
 
     val contentColorTarget = when {
-        isV2 && isFocused -> Color.White
+        isFocused -> Color.White
         selected -> accentColor
-        isFocused -> colors.TextPrimary
         else -> colors.text.onOverlay
     }
     val animatedContentColor by animateColorAsState(
@@ -286,10 +285,10 @@ private fun SidebarNavigationItem(
     )
     val contentColor = if (selected && !isFocused) contentColorTarget else animatedContentColor
 
-    val iconBrush = if (selected && !(isV2 && isFocused)) palette.accentBrush() else null
+    val iconBrush = if (selected && !isFocused) palette.accentBrush() else null
     val iconTintTarget = when {
+        isFocused -> Color.White
         selected -> Color.White
-        isFocused -> colors.TextPrimary
         else -> colors.text.onOverlay
     }
     val animatedIconTint by animateColorAsState(
@@ -298,23 +297,12 @@ private fun SidebarNavigationItem(
         label = "sidebarItemIconTint"
     )
     val iconTint = if (selected && !isFocused) iconTintTarget else animatedIconTint
-    val itemScale by animateFloatAsState(
-        targetValue = if (isFocused && !isV2) 1.1f else 1f,
-        animationSpec = tween(durationMillis = NuvioMotion.tokens.durations.fast, easing = NuvioMotion.tokens.easings.standard),
-        label = "sidebarItemScale"
-    )
-
     SidebarItemSurface(
         isV2 = isV2,
         backgroundColor = backgroundColor,
         shape = shape,
         onClick = onClick,
         modifier = modifier
-            .graphicsLayer {
-                scaleX = itemScale
-                scaleY = itemScale
-                transformOrigin = TransformOrigin.Center
-            }
             .onFocusChanged {
                 isFocused = it.hasFocus
                 onFocusChanged(it.hasFocus)
@@ -325,6 +313,7 @@ private fun SidebarNavigationItem(
             .then(if (isV2) Modifier.nuvioV2Focus(isFocused, shape, hardwareShadow = false)
                 else Modifier)
     ) {
+        Box(Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .semantics {
@@ -340,8 +329,9 @@ private fun SidebarNavigationItem(
             modifier = Modifier
                 .size(SidebarLeadingVisualSize)
                 .graphicsLayer {
-                    scaleX = iconScale
-                    scaleY = iconScale
+                    val netflixFocusScale = if (isFocused) 1.3f else 1f
+                    scaleX = iconScale * netflixFocusScale
+                    scaleY = iconScale * netflixFocusScale
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -382,6 +372,18 @@ private fun SidebarNavigationItem(
                 .weight(1f)
                 .graphicsLayer { alpha = labelAlpha }
         )
+        }
+        if (selected) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 2.dp)
+                    .width(16.dp)
+                    .height(3.dp)
+                    .clip(CircleShape)
+                    .background(accentColor)
+            )
+        }
         }
     }
 }

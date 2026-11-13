@@ -9,6 +9,9 @@ import com.nuvio.tv.ui.theme.ThemeColorPalette
 fun v2Palette(accent: ThemeColorPalette, appearance: V2AppearancePreferences, theme: com.nuvio.tv.domain.model.AppTheme? = null): ThemeColorPalette {
     val cinematic = appearance.visualStyle == VisualStyle.CINEMATIC_GLASS
     val palette = accent.copy(
+        // Netflix-style navigation focus is white; the Arc identity remains blue in secondary/accent.
+        focusRing = Color.White,
+        focusRingGradient = listOf(Color.White),
         background = if (cinematic) Color(0xFF0B1119) else Color(0xFF03080D),
         backgroundElevated = if (cinematic) Color(0xFF1B2733) else Color(0xFF0A141E),
         backgroundCard = if (cinematic) Color(0xFF22303C) else Color(0xFF0C1822),

@@ -39,7 +39,7 @@ object ThemeColors {
     val Ocean = ThemeColorPalette(
         secondary = NuvioPrimitives.blue500,
         secondaryVariant = NuvioPrimitives.blue700,
-        focusRing = NuvioPrimitives.blue300,
+        focusRing = NuvioPrimitives.white,
         focusBackground = Color(0xFF1A2D3D),
         background = Color(0xFF0D0D0F),
         backgroundElevated = Color(0xFF1A1A1E),

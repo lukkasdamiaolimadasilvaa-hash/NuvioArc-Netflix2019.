@@ -446,7 +446,7 @@ internal val LocalRowFocusGlide = staticCompositionLocalOf<RowFocusGlide?> { nul
 @Composable
 internal fun Modifier.rowFocusRing(focused: Boolean, shape: Shape): Modifier {
     val glide = LocalRowFocusGlide.current
-    if (glide == null || v2FocusDrawsOwnEdge()) return nuvioV2Focus(focused, shape, stationary = true)
+    if (glide == null || v2FocusDrawsOwnEdge()) return nuvioV2Focus(focused, shape, accentOverride = Color.White, stationary = true)
     if (!focused) return this
     SideEffect { glide.ringShape = shape }
     val reportSize = remember(glide) { { size: IntSize -> glide.ringSize = size } }
@@ -466,7 +466,7 @@ private fun RowFocusRing(glide: RowFocusGlide, startPaddingPx: Int) {
                 val placeable = measurable.measure(Constraints.fixed(size.width, size.height))
                 layout(size.width, size.height) { if (size != IntSize.Zero) placeable.place(0, 0) }
             }
-            .nuvioV2Focus(focused = true, shape = glide.ringShape, stationary = true)
+            .nuvioV2Focus(focused = true, shape = glide.ringShape, accentOverride = Color.White, stationary = true)
     )
 }
 
@@ -1295,7 +1295,7 @@ internal fun ModernRowSection(
                     }
                     .focusGroup(),
                 contentPadding = PaddingValues(start = rowStartPadding, end = ROW_END_PADDING),
-                horizontalArrangement = Arrangement.spacedBy(NuvioTheme.spacing.md)
+                horizontalArrangement = Arrangement.spacedBy(9.dp)
             ) {
                 itemsIndexed(
                     items = row.items.list,
@@ -1731,7 +1731,9 @@ private fun ModernCarouselCard(
     val focusedBorder = if (isV2) {
         Border.None
     } else {
-        val focusRingBorder = NuvioTheme.focusRing.border(NuvioTheme.spacing.xxs)
+        val focusRingBorder = remember(NuvioTheme.spacing.xxs) {
+            BorderStroke(NuvioTheme.spacing.xxs, Color.White)
+        }
         remember(cardShape, focusRingBorder) {
             Border(
                 border = focusRingBorder,
@@ -1748,6 +1750,12 @@ private fun ModernCarouselCard(
     val isFastScrollingState = LocalFastScrollActive.current
     // Only the focused card shows the chrome, so only it follows the fast-scroll flag.
     val isFastScrolling = isFocused && isFastScrollingState.value
+    // Netflix 2019 lifts the focused poster slightly; keep the movement subtle for TV D-pad use.
+    val netflixFocusScale by animateFloatAsState(
+        targetValue = if (isFocused && !isFastScrolling) 1.03f else 1f,
+        animationSpec = tween(durationMillis = 180),
+        label = "netflixPosterFocusScale"
+    )
     val effectiveFocusedBorder = if (isFastScrolling && !isV2) {
         remember(cardShape) {
             Border(
@@ -1803,6 +1811,10 @@ private fun ModernCarouselCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(cardHeight)
+                .graphicsLayer {
+                    scaleX = netflixFocusScale
+                    scaleY = netflixFocusScale
+                }
                 // One description per card: the artwork, badges and overlays inside are not read one by one.
                 .semantics { contentDescription = cardDescription }
                 .rowFocusRing(isFocused, cardShape)
@@ -2049,6 +2061,41 @@ private fun ModernCarouselCard(
                     )
                 }
 
+                // Netflix 2019 places poster titles inside the artwork, over a short bottom fade.
+                if (showLabels && !useLandscapeOverlayTreatment && !isBackdropExpanded && !showTitleOverlay &&
+                    !isCollectionFolder && payload?.scoutMix == null && item.title.isNotBlank()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .height(cardHeight * 0.38f)
+                            .background(
+                                Brush.verticalGradient(
+                                    0.0f to Color.Transparent,
+                                    0.42f to Color.Black.copy(alpha = 0.18f),
+                                    1.0f to Color.Black.copy(alpha = 0.92f)
+                                )
+                            )
+                    )
+                    Text(
+                        text = item.title,
+                        style = titleStyle.copy(
+                            fontSize = 16.sp,
+                            lineHeight = 17.sp,
+                            fontWeight = FontWeight.Black,
+                            textDirection = item.title.contentTextDirection()
+                        ),
+                        color = Color.White,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .padding(start = 8.dp, end = 8.dp, bottom = 10.dp)
+                    )
+                }
+
                 item.cornerLabel?.takeIf { it.isNotBlank() }?.let { label ->
                     Text(
                         text = label,
@@ -2095,7 +2142,10 @@ private fun ModernCarouselCard(
             }
         }
 
-        if (showLabels && !isBackdropExpanded && item.title.isNotBlank() && payload?.scoutMix == null) {
+        if (showLabels && !isBackdropExpanded &&
+            (useLandscapeOverlayTreatment || isCollectionFolder) &&
+            item.title.isNotBlank() && payload?.scoutMix == null
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
