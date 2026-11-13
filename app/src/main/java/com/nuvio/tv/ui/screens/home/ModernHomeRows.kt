@@ -446,7 +446,7 @@ internal val LocalRowFocusGlide = staticCompositionLocalOf<RowFocusGlide?> { nul
 @Composable
 internal fun Modifier.rowFocusRing(focused: Boolean, shape: Shape): Modifier {
     val glide = LocalRowFocusGlide.current
-    if (glide == null || v2FocusDrawsOwnEdge()) return nuvioV2Focus(focused, shape, stationary = true)
+    if (glide == null || v2FocusDrawsOwnEdge()) return nuvioV2Focus(focused, shape, accentOverride = Color.White, stationary = true)
     if (!focused) return this
     SideEffect { glide.ringShape = shape }
     val reportSize = remember(glide) { { size: IntSize -> glide.ringSize = size } }
@@ -466,7 +466,7 @@ private fun RowFocusRing(glide: RowFocusGlide, startPaddingPx: Int) {
                 val placeable = measurable.measure(Constraints.fixed(size.width, size.height))
                 layout(size.width, size.height) { if (size != IntSize.Zero) placeable.place(0, 0) }
             }
-            .nuvioV2Focus(focused = true, shape = glide.ringShape, stationary = true)
+            .nuvioV2Focus(focused = true, shape = glide.ringShape, accentOverride = Color.White, stationary = true)
     )
 }
 
@@ -1731,7 +1731,9 @@ private fun ModernCarouselCard(
     val focusedBorder = if (isV2) {
         Border.None
     } else {
-        val focusRingBorder = NuvioTheme.focusRing.border(NuvioTheme.spacing.xxs)
+        val focusRingBorder = remember(NuvioTheme.spacing.xxs) {
+            BorderStroke(NuvioTheme.spacing.xxs, Color.White)
+        }
         remember(cardShape, focusRingBorder) {
             Border(
                 border = focusRingBorder,
