@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -455,10 +456,10 @@ private fun HeroTitleContent(
 ) {
     val preview = previewProvider() ?: return
     val highlighterEnabled = LocalRecompositionHighlighterEnabled.current
-    val descriptionScale = if (portraitMode) 0.90f else 1f
-    val titleScale = if (portraitMode) 0.92f else 1f
+    val descriptionScale = 1.15f
+    val titleScale = 2f
     val metaScale = 1f
-    val titleSpacing = NuvioTheme.spacing.sm * titleScale
+    val titleSpacing = NuvioTheme.spacing.sm
     val metaSpacing = NuvioTheme.spacing.sm * metaScale
     val imdbMetaSpacing = NuvioTheme.spacing.xs * metaScale
     val context = LocalContext.current
@@ -466,7 +467,7 @@ private fun HeroTitleContent(
     val headlineLarge = MaterialTheme.typography.headlineLarge
     val labelMedium = MaterialTheme.typography.labelMedium
     val bodyMedium = MaterialTheme.typography.bodyMedium
-    val logoMaxWidthPx = remember(density) { with(density) { 340.dp.roundToPx() } }
+    val logoMaxWidthPx = remember(density) { with(density) { 420.dp.roundToPx() } }
     val logoHeightPx = remember(density) { with(density) { 68.dp.roundToPx() } }
 
     // Same idea as in HeroTitleBlock: only a flip of the result should recompose this content.
@@ -480,7 +481,7 @@ private fun HeroTitleContent(
     val scaledTitleStyle = remember(headlineLarge, titleScale) {
         headlineLarge.copy(
             fontSize = headlineLarge.fontSize * titleScale,
-            lineHeight = headlineLarge.lineHeight * titleScale
+            lineHeight = headlineLarge.fontSize * titleScale
         )
     }
     val scaledDescriptionStyle = remember(bodyMedium, descriptionScale) {
@@ -511,11 +512,11 @@ private fun HeroTitleContent(
         verticalArrangement = Arrangement.spacedBy(titleSpacing)
     ) {
         // Text remains readable on logo failure/timeout; both choices occupy the same slot.
-        Box(Modifier.height(68.dp).fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
+        Box(Modifier.heightIn(min = 68.dp).fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
             if (preparedLogo != null) {
                 Image(
                     painter = preparedLogo.asPainter(context), contentDescription = preview.title,
-                    modifier = Modifier.widthIn(max = 340.dp).fillMaxSize().graphicsLayer { alpha = metaAlpha },
+                    modifier = Modifier.widthIn(max = 420.dp).height(68.dp).graphicsLayer { alpha = metaAlpha },
                     contentScale = ContentScale.Fit, alignment = Alignment.CenterStart
                 )
             } else {
