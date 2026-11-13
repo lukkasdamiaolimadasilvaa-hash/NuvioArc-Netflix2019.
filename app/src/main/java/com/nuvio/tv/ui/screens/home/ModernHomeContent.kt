@@ -746,7 +746,7 @@ fun ModernHomeContent(
     val portraitBaseHeight = uiScale.posterSizeDp(uiState.posterCardHeightDp).dp
     val portraitModernPosterScale = 1.08f
     val landscapeModernPosterScale = 1.34f
-    val portraitCatalogCardWidth = portraitBaseWidth * 0.84f * portraitModernPosterScale
+    val portraitCatalogCardWidth = portraitBaseWidth * portraitModernPosterScale
     val drawnDensity = LocalDensity.current
     val drawnPosterPx = with(drawnDensity) { portraitCatalogCardWidth.roundToPx() }
     val drawnLogoPx = with(drawnDensity) { 220.dp.roundToPx() }
@@ -754,7 +754,7 @@ fun ModernHomeContent(
     LaunchedEffect(drawnPosterPx, drawnLogoPx, drawnScreenPx) {
         DrawnArtworkWidths.report(drawnPosterPx, drawnLogoPx, drawnScreenPx)
     }
-    val portraitCatalogCardHeight = portraitBaseHeight * 0.84f * portraitModernPosterScale
+    val portraitCatalogCardHeight = portraitBaseHeight * portraitModernPosterScale
     val landscapeCatalogCardWidth = portraitBaseWidth * 1.24f * landscapeModernPosterScale
     val landscapeCatalogCardHeight = landscapeCatalogCardWidth / 1.77f
     // Poster style reuses the portrait catalog dimensions so its artwork matches the catalogs below it.
@@ -1009,7 +1009,7 @@ fun ModernHomeContent(
                 }
             }
             val localDensity = LocalDensity.current
-            val rowsViewportHeightFraction = if (useLandscapePosters) 0.49f else 0.52f
+            val rowsViewportHeightFraction = if (useLandscapePosters) 0.34f else 0.36f
             val tallestRowCardHeight = maxOf(
                 if (useLandscapePosters) landscapeCatalogCardHeight else portraitCatalogCardHeight,
                 continueWatchingCardHeight
