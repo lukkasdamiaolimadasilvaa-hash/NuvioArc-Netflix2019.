@@ -466,8 +466,8 @@ private fun HeroTitleContent(
     val headlineLarge = MaterialTheme.typography.headlineLarge
     val labelMedium = MaterialTheme.typography.labelMedium
     val bodyMedium = MaterialTheme.typography.bodyMedium
-    val logoMaxWidthPx = remember(density) { with(density) { 220.dp.roundToPx() } }
-    val logoHeightPx = remember(density) { with(density) { 100.dp.roundToPx() } }
+    val logoMaxWidthPx = remember(density) { with(density) { 340.dp.roundToPx() } }
+    val logoHeightPx = remember(density) { with(density) { 68.dp.roundToPx() } }
 
     // Same idea as in HeroTitleBlock: only a flip of the result should recompose this content.
     val latestTrailerPlaying = rememberUpdatedState(trailerPlaying)
@@ -511,11 +511,11 @@ private fun HeroTitleContent(
         verticalArrangement = Arrangement.spacedBy(titleSpacing)
     ) {
         // Text remains readable on logo failure/timeout; both choices occupy the same slot.
-        Box(Modifier.height(100.dp).fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
+        Box(Modifier.height(68.dp).fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
             if (preparedLogo != null) {
                 Image(
                     painter = preparedLogo.asPainter(context), contentDescription = preview.title,
-                    modifier = Modifier.widthIn(max = 220.dp).fillMaxSize().graphicsLayer { alpha = metaAlpha },
+                    modifier = Modifier.widthIn(max = 340.dp).fillMaxSize().graphicsLayer { alpha = metaAlpha },
                     contentScale = ContentScale.Fit, alignment = Alignment.CenterStart
                 )
             } else {
