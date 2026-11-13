@@ -456,8 +456,8 @@ private fun HeroTitleContent(
 ) {
     val preview = previewProvider() ?: return
     val highlighterEnabled = LocalRecompositionHighlighterEnabled.current
-    val descriptionScale = 0.90f
-    val titleScale = 1.56f
+    val descriptionScale = 1.15f
+    val titleScale = 2f
     val metaScale = 1f
     val titleSpacing = NuvioTheme.spacing.sm
     val metaSpacing = NuvioTheme.spacing.sm * metaScale
