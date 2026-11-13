@@ -274,9 +274,8 @@ private fun SidebarNavigationItem(
     val backgroundColor = if (selected && !isFocused) backgroundColorTarget else animatedBackgroundColor
 
     val contentColorTarget = when {
-        isV2 && isFocused -> Color.White
+        isFocused -> Color.White
         selected -> accentColor
-        isFocused -> colors.TextPrimary
         else -> colors.text.onOverlay
     }
     val animatedContentColor by animateColorAsState(
@@ -286,10 +285,10 @@ private fun SidebarNavigationItem(
     )
     val contentColor = if (selected && !isFocused) contentColorTarget else animatedContentColor
 
-    val iconBrush = if (selected && !(isV2 && isFocused)) palette.accentBrush() else null
+    val iconBrush = if (selected && !isFocused) palette.accentBrush() else null
     val iconTintTarget = when {
+        isFocused -> Color.White
         selected -> Color.White
-        isFocused -> colors.TextPrimary
         else -> colors.text.onOverlay
     }
     val animatedIconTint by animateColorAsState(
