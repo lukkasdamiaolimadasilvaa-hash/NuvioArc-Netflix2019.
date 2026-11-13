@@ -1295,7 +1295,7 @@ internal fun ModernRowSection(
                     }
                     .focusGroup(),
                 contentPadding = PaddingValues(start = rowStartPadding, end = ROW_END_PADDING),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(9.dp)
             ) {
                 itemsIndexed(
                     items = row.items.list,
