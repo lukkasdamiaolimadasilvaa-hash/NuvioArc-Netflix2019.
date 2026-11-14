@@ -1,0 +1,56 @@
+name: Titan Android Build
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/titan-netflix-2019]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Compile Nuvio Arc (Full Debug)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build components
+        run: |
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;29.0.14206865" "cmake;3.22.1"
+
+      - name: Configure optional native bridges for CI
+        run: |
+          printf '%s\n' \
+            'DOVI_NATIVE_ENABLED=false' \
+            'DOVI_EXTRACTOR_HOOK_READY=false' \
+            'DOVI_ENABLE_REAL_LINK=false' \
+            'AML_FEL_NATIVE_ENABLED=false' > local.dev.properties
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Compile Android TV APK
+        run: ./gradlew --no-daemon --stacktrace :app:assembleFullDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: NuvioArc-Titan-Full-Debug
+          path: app/build/outputs/apk/full/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
