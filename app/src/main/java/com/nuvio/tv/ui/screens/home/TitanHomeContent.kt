@@ -62,7 +62,8 @@ private data class TitanCard(
     val rating: Float?,
     val ageRating: String?,
     val extra: String?,
-    val progress: Float?
+    val progress: Float?,
+    val continueWatchingItem: ContinueWatchingItem? = null
 )
 
 private data class TitanRow(
@@ -116,7 +117,8 @@ private fun buildTitanRows(uiState: HomeUiState): List<TitanRow> {
                         rating = item.episodeImdbRating,
                         ageRating = null,
                         extra = if (progress.season != null && progress.episode != null) "T${progress.season}:E${progress.episode}" else null,
-                        progress = progress.progressPercentage.coerceIn(0f, 1f)
+                        progress = progress.progressPercentage.coerceIn(0f, 1f),
+                        continueWatchingItem = item
                     )
                 }
                 else -> null
@@ -148,6 +150,7 @@ private fun buildTitanRows(uiState: HomeUiState): List<TitanRow> {
 fun TitanHomeContent(
     uiState: HomeUiState,
     onNavigateToDetail: (String, String, String) -> Unit,
+    onContinueWatchingClick: (ContinueWatchingItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val rows = remember(uiState.catalogRows, uiState.continueWatchingItems, uiState.continueWatchingEnabled) {
@@ -209,7 +212,14 @@ fun TitanHomeContent(
                     TitanRowView(
                         row = row,
                         onFocused = { focusedCard = it },
-                        onClick = { card -> onNavigateToDetail(card.id, card.type, card.addonBaseUrl) }
+                        onClick = { card ->
+                            val continueWatchingItem = card.continueWatchingItem
+                            if (continueWatchingItem != null) {
+                                onContinueWatchingClick(continueWatchingItem)
+                            } else {
+                                onNavigateToDetail(card.id, card.type, card.addonBaseUrl)
+                            }
+                        }
                     )
                 }
             }
