@@ -30,6 +30,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.Card
@@ -44,6 +48,9 @@ import com.nuvio.tv.domain.model.HomeImdbRatingsVisibility
 import com.nuvio.tv.domain.model.HomeLayout
 import com.nuvio.tv.domain.model.NavigationStyle
 import com.nuvio.tv.domain.model.WatchedTitlesMode
+import com.nuvio.tv.ui.components.ClassicLayoutPreview
+import com.nuvio.tv.ui.components.GridLayoutPreview
+import com.nuvio.tv.ui.components.ModernLayoutPreview
 import com.nuvio.tv.ui.v2.appearance.LocalV2Appearance
 
 @Composable
@@ -51,6 +58,25 @@ internal fun LayoutHomeLayoutSection(
     uiState: LayoutSettingsUiState,
     onEvent: (LayoutSettingsEvent) -> Unit
 ) {
+    val firstHomeLayoutFocusRequester = remember { FocusRequester() }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .settingsOptionRow(firstHomeLayoutFocusRequester),
+        horizontalArrangement = Arrangement.spacedBy(NuvioTheme.spacing.md)
+    ) {
+        listOf(HomeLayout.MODERN, HomeLayout.GRID, HomeLayout.CLASSIC, HomeLayout.TITAN).forEachIndexed { index, layout ->
+            LayoutCard(
+                layout = layout,
+                isSelected = uiState.selectedLayout == layout,
+                onClick = { onEvent(LayoutSettingsEvent.SelectLayout(layout)) },
+                modifier = Modifier
+                    .weight(1f)
+                    .then(if (index == 0) Modifier.focusRequester(firstHomeLayoutFocusRequester) else Modifier)
+            )
+        }
+    }
+
     if (uiState.selectedLayout == HomeLayout.MODERN) {
         SettingsToggleRow(
             title = stringResource(R.string.layout_fullscreen_hero_backdrop),
@@ -285,6 +311,97 @@ private fun WatchedTitlesRow(
             width = 460.dp,
             maxHeight = 400.dp
         )
+    }
+}
+
+@Composable
+private fun LayoutCard(
+    layout: HomeLayout,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var isFocused by remember { mutableStateOf(false) }
+    val animatePreview = isSelected || isFocused
+
+    Card(
+        onClick = onClick,
+        modifier = modifier
+            .onFocusChanged { state -> isFocused = state.isFocused }
+            .semantics {
+                role = Role.RadioButton
+                selected = isSelected
+            },
+        colors = CardDefaults.colors(
+            containerColor = NuvioTheme.colors.Background,
+            focusedContainerColor = NuvioTheme.colors.Background
+        ),
+        border = CardDefaults.border(
+            border = if (isSelected) Border(
+                border = NuvioTheme.focusRing.border(NuvioTheme.spacing.hairline),
+                shape = RoundedCornerShape(8.dp)
+            ) else Border.None,
+            focusedBorder = Border(
+                border = NuvioTheme.focusRing.border(NuvioTheme.spacing.xxs),
+                shape = RoundedCornerShape(8.dp)
+            )
+        ),
+        shape = CardDefaults.shape(RoundedCornerShape(8.dp)),
+        scale = CardDefaults.scale(focusedScale = 1f, pressedScale = 1f)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(112.dp)
+            ) {
+                when (layout) {
+                    HomeLayout.CLASSIC, HomeLayout.TITAN -> ClassicLayoutPreview(
+                        modifier = Modifier.fillMaxWidth(),
+                        animated = animatePreview
+                    )
+                    HomeLayout.GRID -> GridLayoutPreview(
+                        modifier = Modifier.fillMaxWidth(),
+                        animated = animatePreview
+                    )
+                    HomeLayout.MODERN -> ModernLayoutPreview(
+                        modifier = Modifier.fillMaxWidth(),
+                        animated = animatePreview
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                if (isSelected) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        tint = NuvioTheme.colors.FocusRing,
+                        modifier = Modifier
+                            .size(NuvioTheme.spacing.lg)
+                            .padding(end = 6.dp)
+                    )
+                }
+                Text(
+                    text = when (layout) {
+                        HomeLayout.CLASSIC -> stringResource(R.string.layout_classic)
+                        HomeLayout.GRID -> stringResource(R.string.layout_grid)
+                        HomeLayout.MODERN -> stringResource(R.string.layout_modern)
+                        HomeLayout.TITAN -> "Titan 2019"
+                    },
+                    style = MaterialTheme.typography.labelLarge,
+                    color = if (isSelected || isFocused) NuvioTheme.colors.TextPrimary else NuvioTheme.colors.TextSecondary
+                )
+            }
+        }
     }
 }
 
