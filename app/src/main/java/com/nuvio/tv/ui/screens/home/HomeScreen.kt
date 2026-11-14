@@ -444,7 +444,8 @@ fun HomeScreen(
 
                             HomeLayout.TITAN -> TitanHomeContent(
                                 uiState = uiState,
-                                onNavigateToDetail = onNavigateToDetailStable
+                                onNavigateToDetail = onNavigateToDetailStable,
+                                onContinueWatchingClick = onContinueWatchingClickStable
                             )
 
                             HomeLayout.MODERN -> ModernHomeRoute(
