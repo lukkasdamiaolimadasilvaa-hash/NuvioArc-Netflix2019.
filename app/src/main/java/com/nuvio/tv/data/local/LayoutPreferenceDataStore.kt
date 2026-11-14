@@ -170,11 +170,12 @@ class LayoutPreferenceDataStore @Inject constructor(
     private fun positiveOrDefault(value: Int?, defaultValue: Int): Int =
         value?.takeIf { it > 0 } ?: defaultValue
 
-    // The fork uses the Modern layout exclusively. Forced read-side so
-    // stored or sync-imported CLASSIC/GRID values are neutralised: "selected_layout"
-    // rides in the synced layout_settings blob, so a write-side migration alone could
-    // be undone by a remote import. setLayout still records the has-chosen flag.
-    val selectedLayout: Flow<HomeLayout> = profileFlow { HomeLayout.MODERN }
+    // Keep the selected home layout from the active profile. Unknown or legacy
+    // values safely fall back to Modern so a bad preference cannot break Home.
+    val selectedLayout: Flow<HomeLayout> = profileFlow { prefs ->
+        val stored = prefs[layoutKey] ?: HomeLayout.MODERN.name
+        runCatching { HomeLayout.valueOf(stored) }.getOrDefault(HomeLayout.MODERN)
+    }
 
     val continueWatchingEnabled: Flow<Boolean> = profileFlow { prefs ->
         prefs[continueWatchingEnabledKey] ?: true

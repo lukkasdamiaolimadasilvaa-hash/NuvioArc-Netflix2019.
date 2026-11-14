@@ -442,6 +442,12 @@ fun HomeScreen(
                                 onCatalogItemLongPress = onCatalogItemLongPress
                             )
 
+                            HomeLayout.TITAN -> TitanHomeContent(
+                                uiState = uiState,
+                                onNavigateToDetail = onNavigateToDetailStable,
+                                onContinueWatchingClick = onContinueWatchingClickStable
+                            )
+
                             HomeLayout.MODERN -> ModernHomeRoute(
                                 viewModel = viewModel,
                                 uiState = uiState,
