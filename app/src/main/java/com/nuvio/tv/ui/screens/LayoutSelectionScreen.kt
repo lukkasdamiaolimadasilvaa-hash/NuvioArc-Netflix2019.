@@ -208,7 +208,7 @@ private fun LayoutOptionCard(
                         .height(200.dp)
                 ) {
                     when (layout) {
-                        HomeLayout.CLASSIC -> ClassicLayoutPreview(
+                        HomeLayout.CLASSIC, HomeLayout.TITAN -> ClassicLayoutPreview(
                             modifier = Modifier.fillMaxSize()
                         )
                         HomeLayout.GRID -> GridLayoutPreview(
@@ -227,6 +227,7 @@ private fun LayoutOptionCard(
                         HomeLayout.CLASSIC -> stringResource(R.string.layout_classic)
                         HomeLayout.GRID -> stringResource(R.string.layout_grid)
                         HomeLayout.MODERN -> stringResource(R.string.layout_modern)
+                        HomeLayout.TITAN -> "Titan 2019"
                     },
                     style = MaterialTheme.typography.titleLarge,
                     color = if (isSelected || isFocused) NuvioTheme.colors.TextPrimary else NuvioTheme.colors.TextSecondary
@@ -239,6 +240,7 @@ private fun LayoutOptionCard(
                     HomeLayout.CLASSIC -> stringResource(R.string.layout_classic_desc)
                     HomeLayout.GRID -> stringResource(R.string.layout_grid_desc)
                     HomeLayout.MODERN -> stringResource(R.string.layout_modern_desc)
+                    HomeLayout.TITAN -> "Visual de streaming 2019"
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = NuvioTheme.colors.TextTertiary
