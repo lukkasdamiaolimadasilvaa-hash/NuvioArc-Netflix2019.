@@ -99,7 +99,7 @@ internal fun LayoutHomeLayoutSection(
         )
     }
 
-    if (uiState.selectedLayout != HomeLayout.MODERN) {
+    if (uiState.selectedLayout == HomeLayout.CLASSIC || uiState.selectedLayout == HomeLayout.GRID) {
         SettingsToggleRow(
             title = stringResource(R.string.layout_show_hero),
             subtitle = stringResource(R.string.layout_show_hero_sub),
@@ -211,7 +211,9 @@ internal fun LayoutHomeContentSection(
         }
     )
     // Classic and Grid only show descriptions in the hero carousel.
-    if (uiState.selectedLayout == HomeLayout.MODERN || uiState.heroSectionEnabled) {
+    if (uiState.selectedLayout == HomeLayout.MODERN ||
+        ((uiState.selectedLayout == HomeLayout.CLASSIC || uiState.selectedLayout == HomeLayout.GRID) && uiState.heroSectionEnabled)
+    ) {
         SettingsToggleRow(
             title = stringResource(R.string.layout_hero_description_auto_scroll),
             subtitle = stringResource(R.string.layout_hero_description_auto_scroll_sub),
